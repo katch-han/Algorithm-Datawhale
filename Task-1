@@ -1,0 +1,88 @@
+集成学习
+    通过构建并结合多个学习器来完成学习任务，有时也被称为多分类器系统。先产生一组 个体学习器，再用某种策略把它们结合起来。
+    要获得好的集成，要 好而不同 ，即个体学习器要有一定的准确性，并且要有 多样性
+
+个体学习器
+    通常由一个现在的学习算法从训练数据产生，在一个集成中，可以全部是相同的个体学习器（同质），也可以是不同的个体学习器（异质）
+
+boosting
+    个体学习器之间存在强烈的依赖关系，必须串行生成的序列化方法。是一组可将弱学习器提升为强学习器的算法：
+    先从初始训练集训练出一个基学习器，再根据基学习器的表现对训练样本进行调整，增大错误样本的权重，减小正确样本的比重，
+    然后基于调整后的样本再来训练下一个分类器；重复以上步骤，直到学习器数目达到事先指定的值,最终将这些学习器进行加权结合。
+    最著名的算法是 Adaboost
+    对于无法接受带权样本的基学习方法，则可通过‘重采样’来处理。
+    Boosting主要关注降低偏差，因此能基于泛化能力弱的学习器构建出很强的集成，如决策树
+
+bagging
+    个体学习器之间不存在强烈的依赖关系，可同时生成的并行化方法。
+    通过 对训练样本进行采样产生若干个不同的相互有重叠的子集，再从每个数据子集中训练出一个基学习器 的方法来达到 个体学习器相互独立 的目的，
+    再将这些学习器结合。在对预测输出进行结合时，对分类任务采用简单投票法，对回归任务采用简单平均法。
+    bagging主要关注降低方差，
+
+组合策略
+    平均法 --针对数值型输出
+        简单平均法 加权平均法
+    投票法 --针对分类任务
+        绝对多数投票法  相对多数投票法  加权投票法
+    学习法
+
+随机森林的思想、推广、优缺点
+    用随机的方式建立一个决策树森林，每棵决策树之间是没有关联的，是一种bagging集成方法。
+    优点：
+    在数据集上表现良好 
+    在当前的很多数据集上，相对其他算法有着很⼤大的优势 
+    它能够处理理很⾼高维度(feature很多)的数据，并且不不⽤用做特征选择 
+    在训练完后，它能够给出哪些feature⽐比较重要 
+    在创建随机森林林的时候，对generlization error使⽤用的是⽆无偏估计,不需要做交叉验证
+    训练速度快
+    在训练过程中，能够检测到feature间的互相影响 
+    容易易做成并⾏行行化⽅方法
+    实现⽐比较简单
+    
+RandomForestClassifier(n_estimators='warn', 
+                       criterion='gini', 
+                       max_depth=None, 
+                       min_samples_split=2, 
+                       min_samples_leaf=1, 
+                       min_weight_fraction_leaf=0.0, 
+                       max_features='auto', 
+                       max_leaf_nodes=None, 
+                       min_impurity_decrease=0.0, min_impurity_split=None, 
+                       bootstrap=True, oob_score=False, 
+                       n_jobs=None, random_state=None, verbose=0, warm_start=False, 
+                       class_weight=None)
+    n_estimators : integer, optional (default=10)
+    随机森林中树的数量；
+    criterion : string, optional (default=”gini”)
+    树分裂的规则：gini系数，entropy熵；
+    max_features : int, float, string or None, optional (default=”auto”)
+    查找最佳分裂所需考虑的特征数，
+        int：分裂的最大特征数，
+        float：分裂的特征占比，
+        auto、sqrt：sqrt(n_features)，
+        log2：log2(n_features)，
+        None：n_features，
+    max_depth : integer or None, optional (default=None)
+    树的最大深度；
+    min_samples_split：int, float, optional (default=2)
+    最小分裂样本数；
+    min_samples_leaf : int, float, optional (default=1)
+    最小叶子节点样本数；
+    min_weight_fraction_leaf : float, optional (default=0.)
+    最小叶子节点权重；
+    max_leaf_nodes : int or None, optional (default=None)
+    最大叶子节点数；
+    min_impurity_split : float, optional (default=1e-7)
+    分裂的最小不纯度；
+    bootstrap : boolean, optional (default=True)
+    是否使用bootstrap；
+    oob_score : bool (default=False)
+    是否使用袋外（out-of-bag）样本估计准确度；
+    n_jobs : integer, optional (default=1)
+    并行job数，-1 代表全部；
+    random_state : int, RandomState instance or None, optional (default=None)
+    随机数种子；
+    warm_start : bool, optional (default=False)
+    如果设置为True，在之前的模型基础上预测并添加模型，否则，建立一个全新的森林；
+    class_weight : dict, list of dicts, “balanced”,
+    “balanced” 模式自动调整权重，每类的权重为 n_samples / (n_classes * np.bincount(y))，即类别数的倒数除以每类样本数的占比。
